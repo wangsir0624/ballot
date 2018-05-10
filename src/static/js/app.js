@@ -13,21 +13,36 @@
             web3 = new Web3(this.web3Provider);
         },
 
-        initAdmin: function() {
+        init: function(page = 'index') {
             this.initWeb3();
 
-            $.getJSON('../../build/contracts/BallotCollection.json', function(data) {
+            $.getJSON('../build/contracts/BallotCollection.json', function(data) {
                 App.contracts.BallotCollection = TruffleContract(data);
                 App.contracts.BallotCollection.setProvider(App.web3Provider);
 
-                App.contracts.BallotCollection.deployed().then(function(instance) {
-                    return instance.ballots.call(0);
-                }).then(function(result) {
-                    console.log(result);
-                }).catch(function(error) {
-                    console.log(error.message);
-                });
+                if(page == 'index') {
+                    App.contracts.BallotCollection.deployed().then(function (instance) {
+                        collection = instance;
+
+                        return collection.getAllBallots();
+                    }).then(function (result) {
+                        console.log(result);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else if(page == 'addBallot') {
+
+                }
             });
+        },
+
+        addBallotSubmit: function(form) {
+            var ballotName = $(form).find("#inputName").val();
+            var proposals = $(form).find("#inputProposals").val().split(" ").filter(function(proposal) {
+                return proposal != "";
+            });
+
+            return false;
         }
     };
 })();

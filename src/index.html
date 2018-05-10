@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>投票管理</title>
+    <meta charset="UTF-8" />
+</head>
+<body>
+
+<a href="./addBallot.html">发起投票</a>
+<hr />
+<table id="ballot_tb">
+    <tr>
+        <th>投票名称</th>
+        <th>发起人</th>
+        <th>候选人</th>
+    </tr>
+</table>
+
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/js/web3.min.js"></script>
+<script src="static/js/truffle-contract.js"></script>
+<script src="static/js/app.js"></script>
+<script>
+    $(function() {
+        App.init();
+    });
+</script>
+</body>
+</html>

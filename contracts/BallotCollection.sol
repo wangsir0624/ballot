@@ -3,14 +3,13 @@ pragma solidity ^0.4.17;
 import "contracts/Ballot.sol";
 
 contract BallotCollection {
-    Ballot[] public ballots;
-
-    mapping(string => bool) ballotNameHashRecords;
+    address[] public ballots;
 
     function addBallot(string name) public {
-        require(!ballotNameHashRecords[name], "the ballot already exists.");
+        ballots.push(address(new Ballot(name)));
+    }
 
-        ballots.push(new Ballot(name));
-        ballotNameHashRecords[name] = true;
+    function getAllBallots() public view returns (address[] ballots_) {
+        ballots_ = ballots;
     }
 }

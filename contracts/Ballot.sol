@@ -14,16 +14,22 @@ contract Ballot {
 
     mapping(address => bool) voteRecords;
 
+    mapping(string => bool) proposalRecords;
+
     constructor(string _name) public {
         name = _name;
         chairman = msg.sender;
     }
 
     function addProposal(string proposalName) public {
+        require(chairman == msg.sender, "only the chairman can add proposal.");
+        require(!proposalRecords[proposalName], "proposal already exists");
+
         proposals.push(Proposal({
             name: proposalName,
             voteCount: 0
         }));
+        proposalRecords[proposalName] = true;
     }
 
     function vote(uint proposal) public {
