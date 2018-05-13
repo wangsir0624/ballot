@@ -6,37 +6,42 @@ contract Ballot {
     address public chairman;
 
     struct Proposal {
-        string name;
+        bytes32 name;
         uint voteCount;
     }
 
     Proposal[] public proposals;
 
+    bytes32[] rawProposals;
+
     mapping(address => bool) voteRecords;
 
-    mapping(string => bool) proposalRecords;
+    bool public closed;
 
-    constructor(string _name) public {
-        name = _name;
+    constructor(string _name, bytes32[] _proposals) public {
         chairman = msg.sender;
-    }
-
-    function addProposal(string proposalName) public {
-        require(chairman == msg.sender, "only the chairman can add proposal.");
-        require(!proposalRecords[proposalName], "proposal already exists");
-
-        proposals.push(Proposal({
-            name: proposalName,
-            voteCount: 0
-        }));
-        proposalRecords[proposalName] = true;
+        closed = false;
+        name = _name;
+        rawProposals = _proposals;
+        for(uint i = 0; i < _proposals.length; i++) {
+            proposals.push(Proposal({
+                name: _proposals[i],
+                voteCount: 0
+            }));
+        }
     }
 
     function vote(uint proposal) public {
+        require(!closed, "the ballot is already closed.");
         require(!voteRecords[msg.sender], "Already voted.");
         voteRecords[msg.sender] = true;
 
         proposals[proposal].voteCount += 1;
+    }
+
+    function closeBallot() public {
+        require(chairman == msg.sender, "only the chairman can close the ballot.");
+        closed = true;
     }
 
     function winningProposal() public view returns (uint winningProposal_) {
@@ -49,7 +54,18 @@ contract Ballot {
         }
     }
 
-    function winnerName() public view returns (string winnerName_) {
+    function winnerName() public view returns (bytes32 winnerName_) {
         return proposals[winningProposal()].name;
+    }
+
+    function info() public view returns (string name_, address chairman_, bool closed_, bytes32 winner_) {
+        name_ = name;
+        chairman_ = chairman;
+        closed_ = closed;
+        winner_ = winnerName();
+    }
+
+    function getAllProposals() public view returns (bytes32[] proposals_) {
+        proposals_ = rawProposals;
     }
 }
