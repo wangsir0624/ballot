@@ -98,7 +98,11 @@
                     dom += '<td>' + result[0] + '</td>';
                     dom += '<td>' + result[1] + '</td>';
                     dom += '<td>' + App.byte32ToString(result[3]) + '</td>';
-                    dom += '<td><a href="vote.html?address=' + addresses[i] + '">参与投票</a> | <a href="javascript: void(0);" onclick="App.closeBallot(this);">关闭投票</a></td>';
+                    if(result[2]) {
+                        dom += '<td>已关闭投票</td>';
+                    } else {
+                        dom += '<td><a href="vote.html?address=' + addresses[i] + '">参与投票</a> | <a href="javascript: void(0);" onclick="App.closeBallot(\'' + addresses[i] + '\');">关闭投票</a></td>';
+                    }
                     dom += '</tr>';
                     $(dom).appendTo("#ballot_tb tbody");
 
@@ -205,8 +209,14 @@
             return false;
         },
 
-        closeBallot: function(obj) {
-            console.log(obj);
+        closeBallot: function(address) {
+            App.contracts.Ballot.at(address).then(function(instance) {
+                return instance.closeBallot();
+            }).then(function(result) {
+                console.log(result);
+            }).catch(function(error) {
+                alert('只有投票发起者才能关闭投票！');
+            });
         },
 
         getQueryVariable: function (variable)
@@ -217,6 +227,7 @@
                 var pair = vars[i].split("=");
                 if(pair[0] == variable){return pair[1];}
             }
+
             return(false);
         }
     };
