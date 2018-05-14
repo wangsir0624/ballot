@@ -8,7 +8,7 @@
             if (typeof web3 !== 'undefined') {
                 this.web3Provider = web3.currentProvider;
             } else {
-                this.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+                this.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545');
             }
             web3 = new Web3(this.web3Provider);
         },
@@ -45,9 +45,33 @@
             });
         },
 
+        initVote: function() {
+            this.initWeb3();
+
+            $.getJSON('../build/contracts/Ballot.json', function(data) {
+                App.contracts.Ballot = TruffleContract(data);
+                App.contracts.Ballot.setProvider(App.web3Provider);
+
+                App.contracts.Ballot.at(App.getQueryVariable('address')).then(function(instance) {
+                    ballot = instance;
+
+                    return ballot.info();
+                }).then(function(result) {
+                    var dom = '<label>' + result[0] + '</label>';
+                    for(var i in result[4]) {
+                        dom += '<div class="radio"><label><input type="radio" name="proposal" value="' + i + '">' + App.byte32ToString(result[4][i]) + '</label></div>';
+                    }
+
+                    $(dom).prependTo("#vote_form");
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            });
+        },
+
         addBallotSubmit: function(form) {
             var ballotName = $(form).find("#inputName").val();
-            var proposals = $(form).find("#inputProposals").val().split(" ").filter(function(proposal) {
+            var proposals = $(form).find("#inputProposals").val().split(",").filter(function(proposal) {
                 return proposal != "";
             }).map(function(proposal) {
                 return App.stringToBytes32(proposal);
@@ -74,6 +98,7 @@
                     dom += '<td>' + result[0] + '</td>';
                     dom += '<td>' + result[1] + '</td>';
                     dom += '<td>' + App.byte32ToString(result[3]) + '</td>';
+                    dom += '<td><a href="vote.html?address=' + addresses[i] + '">参与投票</a> | <a href="javascript: void(0);" onclick="App.closeBallot(this);">关闭投票</a></td>';
                     dom += '</tr>';
                     $(dom).appendTo("#ballot_tb tbody");
 
@@ -89,7 +114,7 @@
             for(var i = 2; i < 66; i += 2) {
                 nums.push(parseInt(raw.substr(i, 2), 16));
             }
-            console.log(this.stringToBytes32('中'));
+
             return this.toUTF8(nums);
         },
 
@@ -161,6 +186,38 @@
             } else {
                 return [byteSize >> 8, byteSize & 0xff].concat(back);
             }
+        },
+
+        vote: function(obj) {
+            var selected = $(obj).find("input[name=proposal]:checked").val();
+
+            if(selected === undefined) {
+                alert('请选择您要投票的选手！');
+                return false;
+            }
+
+            ballot.vote(selected).then(function(result) {
+                alert('投票成功，谢谢参与！');
+            }).catch(function(error) {
+                alert('您已经参与过投票了！');
+            });
+
+            return false;
+        },
+
+        closeBallot: function(obj) {
+            console.log(obj);
+        },
+
+        getQueryVariable: function (variable)
+        {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
         }
     };
 })();

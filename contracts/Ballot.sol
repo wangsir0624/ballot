@@ -58,14 +58,11 @@ contract Ballot {
         return proposals[winningProposal()].name;
     }
 
-    function info() public view returns (string name_, address chairman_, bool closed_, bytes32 winner_) {
+    function info() public view returns (string name_, address chairman_, bool closed_, bytes32 winner_, bytes32[] proposals_) {
         name_ = name;
         chairman_ = chairman;
         closed_ = closed;
         winner_ = winnerName();
-    }
-
-    function getAllProposals() public view returns (bytes32[] proposals_) {
         proposals_ = rawProposals;
     }
 }
