@@ -6,7 +6,9 @@ contract BallotCollection {
     address[] public ballots;
 
     function addBallot(string name, bytes32[] _proposals) public returns(address address_) {
-        address_ = address(new Ballot(name, _proposals));
+        Ballot ballot = new Ballot(name, _proposals);
+        ballot.setChairman(msg.sender);
+        address_ = address(ballot);
         ballots.push(address_);
     }
 

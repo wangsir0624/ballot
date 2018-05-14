@@ -31,6 +31,10 @@ contract Ballot {
         }
     }
 
+    function setChairman(address _chairman) external {
+        chairman = _chairman;
+    }
+
     function vote(uint proposal) public {
         require(!closed, "the ballot is already closed.");
         require(!voteRecords[msg.sender], "Already voted.");
