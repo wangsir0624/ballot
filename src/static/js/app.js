@@ -16,7 +16,7 @@
         initIndex: function() {
             this.initWeb3();
 
-            $.getJSON('../build/contracts/BallotCollection.json', function(data) {
+            $.getJSON('contracts/BallotCollection.json', function(data) {
                 App.contracts.BallotCollection = TruffleContract(data);
                 App.contracts.BallotCollection.setProvider(App.web3Provider);
 
@@ -25,7 +25,7 @@
 
                     return collection.getAllBallots();
                 }).then(function (result) {
-                    $.getJSON('../build/contracts/Ballot.json', function(data) {
+                    $.getJSON('contracts/Ballot.json', function(data) {
                         App.contracts.Ballot = TruffleContract(data);
                         App.contracts.Ballot.setProvider(App.web3Provider);
                         App.renderBallot(result, 0);
@@ -39,7 +39,7 @@
         initAddBallot: function() {
             this.initWeb3();
 
-            $.getJSON('../build/contracts/BallotCollection.json', function(data) {
+            $.getJSON('contracts/BallotCollection.json', function(data) {
                 App.contracts.BallotCollection = TruffleContract(data);
                 App.contracts.BallotCollection.setProvider(App.web3Provider);
             });
@@ -48,7 +48,7 @@
         initVote: function() {
             this.initWeb3();
 
-            $.getJSON('../build/contracts/Ballot.json', function(data) {
+            $.getJSON('contracts/Ballot.json', function(data) {
                 App.contracts.Ballot = TruffleContract(data);
                 App.contracts.Ballot.setProvider(App.web3Provider);
 
