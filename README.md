@@ -15,7 +15,7 @@ npm install -g truffle
 
 ### 流程
 
-首先打开Ethereum客户端，以Ganache进行说明，Ganache默认使用的rest API地址为`http://127.0.0.1:7545`，打开truffle.js，配置好网络。
+首先打开Ethereum客户端，以truffle develop作为客户端进行说明，truffle develop默认使用的rest API地址为`http://127.0.0.1:9545`，打开truffle.js，配置好网络。
 
 编译
 ```bash
